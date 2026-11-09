@@ -236,8 +236,8 @@ Pass: listing shows the stopped sandbox; its file survives stop/restart.
 > (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
 
 ### Expected behaviors
-- [ ] Adds the docs directory as an additional workspace with `:ro`, after
-      the primary workspace path.
+- [ ] Shows how to add an extra directory as an additional workspace with `:ro` (e.g., demonstrates
+      the syntax for `additionalWorkspaces` with `readOnly: true` or the CLI flag).
 - [ ] Explains read-only restricts writes, not reads, and refuses to mount
       the API-key file; directs secrets to `sbx secret set` instead.
 
