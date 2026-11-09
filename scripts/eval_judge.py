@@ -329,12 +329,14 @@ def prepare_workspace(eval_prompt: EvalPrompt, agent: str) -> Path:
 WORKSPACE_FILE_PATTERNS = [
     "Dockerfile", "Dockerfile.*", "*.dockerfile",
     "compose.yaml", "compose.yml", "compose.*.yaml", "compose.*.yml",
+    "compose.override.yaml", "compose.override.yml",
     "docker-compose.yaml", "docker-compose.yml",
     ".dockerignore",
-    "agent.yaml", "docker-agent.yaml",
+    "agent.yaml", "docker-agent.yaml", "agents.yaml",
     "sbxenv.yaml", ".sbxenv.yaml",
     "*.md",  # READMEs
     ".env.example", ".env.sample",
+    "requirements.txt", "package.json",  # Dependency files for context
 ]
 
 
