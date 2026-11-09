@@ -27,10 +27,10 @@ the default daemon or approve untrusted files just to execute an eval.
       domain-scoped injection, not the raw token inside the sandbox.
 - [ ] Does not generalize this to OAuth passthrough or claim that a leaked
       real credential is harmless outside the sandbox.
-- [ ] Mentions `--sandbox NAME` to scope it to one sandbox vs. the global
-      default.
-- [ ] Explains that storing the token does not grant egress; checks the
-      target domain with `sbx policy check network --sandbox NAME api.github.com`.
+- [ ] Mentions scoping secrets to a sandbox (via `--sandbox NAME`) or explains
+      the default applies to new sandboxes.
+- [ ] Notes that storing the token does not automatically grant network egress;
+      may mention checking or allowing the target domain in the policy.
 
 ### Must not
 - [ ] Must NOT recommend `sbx create --env GH_TOKEN=<value>` or
