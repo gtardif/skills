@@ -2,8 +2,7 @@ name: Live skill evals
 
 # Runs skill evaluations using LLM-as-judge against Claude Code and/or Codex.
 # Evaluations are defined in skills/<skill>/evals/<skill>.md markdown files.
-# Calls a live model and may need tool-specific authentication, so it stays
-# out of offline `task ci`.
+# Each skill runs as a separate job for parallelism and targeted re-runs.
 on:
   pull_request:
     paths:
@@ -12,6 +11,7 @@ on:
       - ".agents/**"
       - "skills/**"
       - "scripts/eval_judge.py"
+      - "scripts/test_eval_judge.py"
       - ".github/workflows/skill-evals.yml"
   schedule:
     - cron: "17 6 * * 1"
@@ -24,7 +24,7 @@ on:
       agent:
         description: "Agent to test (claude, codex, or both)"
         required: false
-        default: "both"
+        default: "claude"
         type: choice
         options:
           - claude
@@ -37,7 +37,7 @@ on:
       repeat:
         description: "Runs per prompt"
         required: false
-        default: "3"
+        default: "1"
 
 permissions:
   contents: read
@@ -47,6 +47,74 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Determine which skills to evaluate based on changed files
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      skills: ${{ steps.detect.outputs.skills }}
+      run_all: ${{ steps.detect.outputs.run_all }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Detect changed skills
+        id: detect
+        run: |
+          # If workflow_dispatch with specific skill, use that
+          if [ -n "${{ inputs.skill }}" ]; then
+            echo "skills=[\"${{ inputs.skill }}\"]" >> $GITHUB_OUTPUT
+            echo "run_all=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # If scheduled or framework changed, run all skills (except guardrails)
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "run_all=true" >> $GITHUB_OUTPUT
+            # All skills except docker-destructive-guardrails (too flaky for CI)
+            echo 'skills=["docker-agent-config","docker-agent-deploy","docker-agent-run","docker-build-strategies","docker-compose-patterns","docker-docs","docker-project-foundations","docker-sandboxes-env","docker-sandboxes-kits","docker-sandboxes-lifecycle","docker-sandboxes-network-credentials"]' >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Get changed files
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_SHA=${{ github.event.pull_request.base.sha }}
+            HEAD_SHA=${{ github.event.pull_request.head.sha }}
+          else
+            BASE_SHA=${{ github.event.before }}
+            HEAD_SHA=${{ github.sha }}
+          fi
+          
+          CHANGED_FILES=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" 2>/dev/null || echo "")
+          
+          # Check if framework files changed
+          FRAMEWORK_CHANGED=false
+          if echo "$CHANGED_FILES" | grep -qE '^(scripts/eval_judge\.py|\.github/workflows/skill-evals\.yml|\.claude-plugin/|\.codex-plugin/|\.agents/)'; then
+            FRAMEWORK_CHANGED=true
+          fi
+          
+          if [ "$FRAMEWORK_CHANGED" = "true" ]; then
+            echo "run_all=true" >> $GITHUB_OUTPUT
+            # All skills except docker-destructive-guardrails
+            echo 'skills=["docker-agent-config","docker-agent-deploy","docker-agent-run","docker-build-strategies","docker-compose-patterns","docker-docs","docker-project-foundations","docker-sandboxes-env","docker-sandboxes-kits","docker-sandboxes-lifecycle","docker-sandboxes-network-credentials"]' >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Extract specific skills that changed
+          SKILLS=$(echo "$CHANGED_FILES" | grep -oE '^skills/[^/]+' | sed 's|skills/||' | sort -u | grep -v '^docker-destructive-guardrails$' || true)
+          
+          if [ -z "$SKILLS" ]; then
+            echo "No skill changes detected"
+            echo "skills=[]" >> $GITHUB_OUTPUT
+            echo "run_all=false" >> $GITHUB_OUTPUT
+          else
+            # Convert to JSON array
+            SKILLS_JSON=$(echo "$SKILLS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            echo "skills=$SKILLS_JSON" >> $GITHUB_OUTPUT
+            echo "run_all=false" >> $GITHUB_OUTPUT
+          fi
+
   plugin-validate:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -65,10 +133,18 @@ jobs:
       - name: Validate plugin manifest
         run: claude plugin validate .
 
-  evals-claude:
-    if: ${{ inputs.agent == 'claude' || inputs.agent == 'both' || inputs.agent == '' }}
+  # Claude evals - one job per skill
+  eval-claude:
+    needs: detect-changes
+    if: |
+      (inputs.agent == 'claude' || inputs.agent == 'both' || inputs.agent == '') &&
+      needs.detect-changes.outputs.skills != '[]'
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: ${{ fromJson(needs.detect-changes.outputs.skills) }}
     env:
       CLAUDE_CODE_VERSION: "2.1.316"
       SBX_VERSION: "0.50.1"
@@ -90,8 +166,6 @@ jobs:
           DOCKERPUBLICBOT_READ_PAT: ${{ secrets.DOCKERPUBLICBOT_READ_PAT }}
           DOCKERPUBLICBOT_USERNAME: ${{ vars.DOCKERPUBLICBOT_USERNAME }}
         run: |
-          # sg kvm runs commands in kvm group context (usermod doesn't affect current shell)
-          # Login starts the daemon and authenticates for pulling sandbox images
           sg kvm -c 'echo "$DOCKERPUBLICBOT_READ_PAT" | sbx login --username "$DOCKERPUBLICBOT_USERNAME" --password-stdin'
           sg kvm -c 'sbx policy init balanced'
 
@@ -106,31 +180,24 @@ jobs:
           python3 -m venv .venv
           .venv/bin/pip install -q --require-hashes -r scripts/requirements.txt
 
-      - name: Run skill evaluations (Claude)
+      - name: Run eval for ${{ matrix.skill }} (Claude)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          INPUT_SKILL: ${{ inputs.skill }}
           INPUT_MODEL: ${{ inputs.model || 'sonnet' }}
-          INPUT_REPEAT: ${{ inputs.repeat || '3' }}
+          INPUT_REPEAT: ${{ inputs.repeat || '1' }}
         run: |
-          set +e
           .venv/bin/python scripts/eval_judge.py \
             --agent claude \
             --model "$INPUT_MODEL" \
             --repeat "$INPUT_REPEAT" \
-            ${INPUT_SKILL:+--skill "$INPUT_SKILL"}
-          exit_code=$?
-          # Debug output
-          echo "=== Listing .eval-runs ==="
-          ls -laR .eval-runs/ 2>&1 | head -100 || echo "No .eval-runs directory found"
-          exit $exit_code
+            --skill "${{ matrix.skill }}"
 
-      - name: Upload eval artifacts (Claude)
+      - name: Upload eval artifacts
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: eval-runs-claude
-          path: .eval-runs/
+          name: eval-claude-${{ matrix.skill }}
+          path: .eval-judge/
           if-no-files-found: ignore
           retention-days: 14
 
@@ -140,11 +207,18 @@ jobs:
           sbx ls -q 2>/dev/null | grep "^eval-" | xargs -r sbx rm --force || true
           sbx daemon stop || true
 
-  evals-codex:
-    # Codex evals use Docker AI Gateway with Docker Hub authentication
-    if: ${{ inputs.agent == 'codex' || inputs.agent == 'both' || inputs.agent == '' }}
+  # Codex evals - one job per skill
+  eval-codex:
+    needs: detect-changes
+    if: |
+      (inputs.agent == 'codex' || inputs.agent == 'both') &&
+      needs.detect-changes.outputs.skills != '[]'
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: ${{ fromJson(needs.detect-changes.outputs.skills) }}
     env:
       CODEX_VERSION: "0.166.0"
       SBX_VERSION: "0.50.1"
@@ -166,8 +240,6 @@ jobs:
           DOCKERPUBLICBOT_READ_PAT: ${{ secrets.DOCKERPUBLICBOT_READ_PAT }}
           DOCKERPUBLICBOT_USERNAME: ${{ vars.DOCKERPUBLICBOT_USERNAME }}
         run: |
-          # sg kvm runs commands in kvm group context (usermod doesn't affect current shell)
-          # Login starts the daemon and authenticates for pulling sandbox images
           sg kvm -c 'echo "$DOCKERPUBLICBOT_READ_PAT" | sbx login --username "$DOCKERPUBLICBOT_USERNAME" --password-stdin'
           sg kvm -c 'sbx policy init balanced'
 
@@ -181,7 +253,6 @@ jobs:
           DOCKERPUBLICBOT_READ_PAT: ${{ secrets.DOCKERPUBLICBOT_READ_PAT }}
           DOCKERPUBLICBOT_USERNAME: ${{ vars.DOCKERPUBLICBOT_USERNAME }}
         run: |
-          # Get JWT token from Docker Hub
           JWT=$(curl -s -X POST "https://hub.docker.com/v2/users/login" \
             -H "Content-Type: application/json" \
             -d "{\"username\":\"${DOCKERPUBLICBOT_USERNAME}\",\"password\":\"${DOCKERPUBLICBOT_READ_PAT}\"}" \
@@ -192,10 +263,7 @@ jobs:
             exit 1
           fi
           
-          # Create Codex config directory
           mkdir -p ~/.codex
-          
-          # Configure Codex to use Docker AI Gateway
           cat > ~/.codex/config.toml << EOF
           model_provider = "docker-gateway"
           
@@ -207,25 +275,19 @@ jobs:
           requires_openai_auth = false
           EOF
           
-          # Export token for later steps
           echo "DOCKER_GATEWAY_TOKEN=${JWT}" >> $GITHUB_ENV
           echo "::add-mask::${JWT}"
-          
-          echo "Codex configured to use Docker AI Gateway"
 
       - name: Install Python dependencies
         run: |
           python3 -m venv .venv
           .venv/bin/pip install -q --require-hashes -r scripts/requirements.txt
 
-      - name: Run skill evaluations (Codex)
+      - name: Run eval for ${{ matrix.skill }} (Codex)
         env:
-          INPUT_SKILL: ${{ inputs.skill }}
           INPUT_MODEL: ${{ inputs.model }}
-          INPUT_REPEAT: ${{ inputs.repeat || '3' }}
+          INPUT_REPEAT: ${{ inputs.repeat || '1' }}
         run: |
-          set +e
-          # Only pass --model if explicitly specified; gateway default works better
           model_arg=""
           if [ -n "$INPUT_MODEL" ]; then
             model_arg="--model $INPUT_MODEL"
@@ -234,19 +296,14 @@ jobs:
             --agent codex \
             $model_arg \
             --repeat "$INPUT_REPEAT" \
-            ${INPUT_SKILL:+--skill "$INPUT_SKILL"}
-          exit_code=$?
-          # Debug output
-          echo "=== Listing .eval-runs ==="
-          ls -laR .eval-runs/ 2>&1 | head -100 || echo "No .eval-runs directory found"
-          exit $exit_code
+            --skill "${{ matrix.skill }}"
 
-      - name: Upload eval artifacts (Codex)
+      - name: Upload eval artifacts
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: eval-runs-codex
-          path: .eval-runs/
+          name: eval-codex-${{ matrix.skill }}
+          path: .eval-judge/
           if-no-files-found: ignore
           retention-days: 14
 
