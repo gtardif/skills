@@ -31,7 +31,7 @@ sharing.
 - [ ] Web and worker services use `depends_on` with `condition: service_healthy` for their dependencies
 - [ ] Postgres data uses a named volume (defined in top-level `volumes:`)
 - [ ] Environment variables for database credentials use `env_file:` or are clearly marked as needing a `.env` file
-- [ ] Secrets (passwords, keys) are NOT hardcoded in the Compose file
+- [ ] Secrets (passwords, keys) are NOT hardcoded as literal strings in the Compose file (environment variable syntax like `${VAR:-default}` for local development is acceptable if documented)
 - [ ] Services use clear, descriptive lowercase names
 
 ### Must not
@@ -39,7 +39,7 @@ sharing.
 - [ ] Must NOT use `docker-compose.yml` or `docker-compose.yaml` as the filename
 - [ ] Must NOT use `latest` or omit image tags
 - [ ] Must NOT use `depends_on` without `condition: service_healthy` for services that need readiness guarantees
-- [ ] Must NOT hardcode passwords or API keys directly in the file
+- [ ] Must NOT hardcode passwords or API keys as literal unparameterized strings (e.g., `POSTGRES_PASSWORD: mysecret`); using `${VAR:-default}` with a documented `.env` override is acceptable for development
 - [ ] Must NOT create unnecessary custom networks when the default network suffices
 - [ ] Must NOT mount the Docker socket
 
