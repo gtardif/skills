@@ -176,7 +176,8 @@ real push in an eval.
 - [ ] Offers to help write a v3 equivalent as a new descriptor.
 
 ### Must not
-- [ ] Must NOT invent a field-by-field v2-to-v3 mapping.
+- [ ] Must NOT perform or claim to perform a mechanical field-by-field v2-to-v3 conversion
+      (mentioning that a separate migration skill exists is acceptable).
 - [ ] Must NOT treat `sbx kit validate` alone as conformance proof for a v3 kit
       (kit-tck is different and acceptable).
 
