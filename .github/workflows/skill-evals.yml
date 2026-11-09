@@ -1,6 +1,7 @@
 name: Live skill evals
 
-# Runs skills/*/evals/*.yaml with Claude Code and/or Codex against real CLIs.
+# Runs skill evaluations using LLM-as-judge against Claude Code and/or Codex.
+# Evaluations are defined in skills/<skill>/evals/<skill>.md markdown files.
 # Calls a live model and may need tool-specific authentication, so it stays
 # out of offline `task ci`.
 on:
@@ -10,14 +11,14 @@ on:
       - ".codex-plugin/**"
       - ".agents/**"
       - "skills/**"
-      - "scripts/skill_eval.py"
+      - "scripts/eval_judge.py"
       - ".github/workflows/skill-evals.yml"
   schedule:
     - cron: "17 6 * * 1"
   workflow_dispatch:
     inputs:
       skill:
-        description: "Only run scenarios for this skill id (empty: all)"
+        description: "Only run evals for this skill id (empty: all)"
         required: false
         default: ""
       agent:
@@ -34,9 +35,9 @@ on:
         required: false
         default: ""
       repeat:
-        description: "Runs per scenario"
+        description: "Runs per prompt"
         required: false
-        default: "1"
+        default: "3"
 
 permissions:
   contents: read
@@ -64,17 +65,13 @@ jobs:
       - name: Validate plugin manifest
         run: claude plugin validate .
 
-  scenarios-claude:
+  evals-claude:
     if: ${{ inputs.agent == 'claude' || inputs.agent == 'both' || inputs.agent == '' }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       CLAUDE_CODE_VERSION: "2.1.316"
       SBX_VERSION: "0.50.1"
-      SKILL_EVAL_AGENT: "claude"
-      SKILL_EVAL_MODEL: ${{ inputs.model || 'sonnet' }}
-      SKILL_EVAL_REPEAT: ${{ inputs.repeat || '1' }}
-      SKILL_EVAL_MIN_PASS_RATE: "1.0"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -109,29 +106,31 @@ jobs:
           python3 -m venv .venv
           .venv/bin/pip install -q --require-hashes -r scripts/requirements.txt
 
-      - name: Run live skill scenarios (Claude)
+      - name: Run skill evaluations (Claude)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           INPUT_SKILL: ${{ inputs.skill }}
+          INPUT_MODEL: ${{ inputs.model || 'sonnet' }}
+          INPUT_REPEAT: ${{ inputs.repeat || '3' }}
         run: |
           set +e
-          .venv/bin/python scripts/skill_eval.py --agent claude ${INPUT_SKILL:+--skill "$INPUT_SKILL"}
+          .venv/bin/python scripts/eval_judge.py \
+            --agent claude \
+            --model "$INPUT_MODEL" \
+            --repeat "$INPUT_REPEAT" \
+            ${INPUT_SKILL:+--skill "$INPUT_SKILL"}
           exit_code=$?
           # Debug output
-          echo "=== Listing .skill-evals ==="
-          ls -laR .skill-evals/ 2>&1 | head -50 || echo "No .skill-evals directory found"
-          echo "=== report.json ==="
-          cat .skill-evals/*/docker-sandboxes-lifecycle/mount-ls-delete/1/report.json 2>/dev/null | head -200 || true
-          echo "=== transcript.jsonl (last 50 lines) ==="
-          tail -50 .skill-evals/*/docker-sandboxes-lifecycle/mount-ls-delete/1/transcript.jsonl 2>/dev/null || true
+          echo "=== Listing .eval-runs ==="
+          ls -laR .eval-runs/ 2>&1 | head -100 || echo "No .eval-runs directory found"
           exit $exit_code
 
-      - name: Upload transcripts and call logs (Claude)
+      - name: Upload eval artifacts (Claude)
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: skill-evals-claude
-          path: .skill-evals/
+          name: eval-runs-claude
+          path: .eval-runs/
           if-no-files-found: ignore
           retention-days: 14
 
@@ -141,20 +140,14 @@ jobs:
           sbx ls -q 2>/dev/null | grep "^eval-" | xargs -r sbx rm --force || true
           sbx daemon stop || true
 
-  scenarios-codex:
+  evals-codex:
     # Codex evals use Docker AI Gateway with Docker Hub authentication
     if: ${{ inputs.agent == 'codex' || inputs.agent == 'both' || inputs.agent == '' }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       CODEX_VERSION: "0.166.0"
       SBX_VERSION: "0.50.1"
-      SKILL_EVAL_AGENT: "codex"
-      # Don't specify a model by default - let Codex use the gateway's default
-      # (explicitly specifying gpt-4o causes flaky behavior where the model refuses to execute commands)
-      SKILL_EVAL_MODEL: ${{ inputs.model || '' }}
-      SKILL_EVAL_REPEAT: ${{ inputs.repeat || '1' }}
-      SKILL_EVAL_MIN_PASS_RATE: "1.0"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -225,34 +218,35 @@ jobs:
           python3 -m venv .venv
           .venv/bin/pip install -q --require-hashes -r scripts/requirements.txt
 
-      - name: Run live skill scenarios (Codex)
+      - name: Run skill evaluations (Codex)
         env:
           INPUT_SKILL: ${{ inputs.skill }}
           INPUT_MODEL: ${{ inputs.model }}
+          INPUT_REPEAT: ${{ inputs.repeat || '3' }}
         run: |
           set +e
-          # Only pass --model if explicitly specified; gateway default works better than explicit gpt-4o
+          # Only pass --model if explicitly specified; gateway default works better
           model_arg=""
           if [ -n "$INPUT_MODEL" ]; then
             model_arg="--model $INPUT_MODEL"
           fi
-          .venv/bin/python scripts/skill_eval.py --agent codex $model_arg ${INPUT_SKILL:+--skill "$INPUT_SKILL"}
+          .venv/bin/python scripts/eval_judge.py \
+            --agent codex \
+            $model_arg \
+            --repeat "$INPUT_REPEAT" \
+            ${INPUT_SKILL:+--skill "$INPUT_SKILL"}
           exit_code=$?
           # Debug output
-          echo "=== Listing .skill-evals ==="
-          ls -laR .skill-evals/ 2>&1 | head -50 || echo "No .skill-evals directory found"
-          echo "=== report.json ==="
-          cat .skill-evals/*/docker-sandboxes-lifecycle/mount-ls-delete/1/report.json 2>/dev/null | head -200 || true
-          echo "=== transcript.jsonl (last 50 lines) ==="
-          tail -50 .skill-evals/*/docker-sandboxes-lifecycle/mount-ls-delete/1/transcript.jsonl 2>/dev/null || true
+          echo "=== Listing .eval-runs ==="
+          ls -laR .eval-runs/ 2>&1 | head -100 || echo "No .eval-runs directory found"
           exit $exit_code
 
-      - name: Upload transcripts and call logs (Codex)
+      - name: Upload eval artifacts (Codex)
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: skill-evals-codex
-          path: .skill-evals/
+          name: eval-runs-codex
+          path: .eval-runs/
           if-no-files-found: ignore
           retention-days: 14
 
