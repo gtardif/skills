@@ -128,8 +128,8 @@ sbx --app-name "$APP" prune --dry-run --filter until=168h
 
 ### Expected behaviors
 - [ ] Uses `sbx exec` for the diagnostic, with `-w` for the working directory
-      and `-e` for a non-secret variable; explains exec starts a stopped
-      sandbox first.
+      and `-e` for a non-secret variable; may note that exec and cp can operate
+      on stopped sandboxes.
 - [ ] Uses `sbx cp` in both directions, with exactly one `SANDBOX:PATH`
       argument and one host path.
 - [ ] Explains sandbox-to-sandbox copying is unsupported; uses a host
