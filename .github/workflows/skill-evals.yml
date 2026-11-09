@@ -62,6 +62,9 @@ jobs:
       - name: Detect changed skills
         id: detect
         run: |
+          # All skills except docker-destructive-guardrails (too flaky for CI)
+          ALL_SKILLS='["docker-agent-config","docker-agent-deploy","docker-agent-run","docker-build-strategies","docker-compose-patterns","docker-docs","docker-project-foundations","docker-sandboxes-env","docker-sandboxes-kits","docker-sandboxes-lifecycle","docker-sandboxes-network-credentials"]'
+          
           # If workflow_dispatch with specific skill, use that
           if [ -n "${{ inputs.skill }}" ]; then
             echo "skills=[\"${{ inputs.skill }}\"]" >> $GITHUB_OUTPUT
@@ -69,11 +72,10 @@ jobs:
             exit 0
           fi
           
-          # If scheduled or framework changed, run all skills (except guardrails)
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          # If scheduled or workflow_dispatch without skill, run all skills
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "run_all=true" >> $GITHUB_OUTPUT
-            # All skills except docker-destructive-guardrails (too flaky for CI)
-            echo 'skills=["docker-agent-config","docker-agent-deploy","docker-agent-run","docker-build-strategies","docker-compose-patterns","docker-docs","docker-project-foundations","docker-sandboxes-env","docker-sandboxes-kits","docker-sandboxes-lifecycle","docker-sandboxes-network-credentials"]' >> $GITHUB_OUTPUT
+            echo "skills=$ALL_SKILLS" >> $GITHUB_OUTPUT
             exit 0
           fi
           
@@ -96,8 +98,7 @@ jobs:
           
           if [ "$FRAMEWORK_CHANGED" = "true" ]; then
             echo "run_all=true" >> $GITHUB_OUTPUT
-            # All skills except docker-destructive-guardrails
-            echo 'skills=["docker-agent-config","docker-agent-deploy","docker-agent-run","docker-build-strategies","docker-compose-patterns","docker-docs","docker-project-foundations","docker-sandboxes-env","docker-sandboxes-kits","docker-sandboxes-lifecycle","docker-sandboxes-network-credentials"]' >> $GITHUB_OUTPUT
+            echo "skills=$ALL_SKILLS" >> $GITHUB_OUTPUT
             exit 0
           fi
           
