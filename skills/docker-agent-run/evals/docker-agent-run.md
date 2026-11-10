@@ -67,7 +67,7 @@ docker agent sandbox list
 - [ ] Notes that a CLI flag on `docker agent run <alias>` still overrides the alias's stored option.
 
 ### Must not
-- [ ] Must NOT suggest editing `agent.yaml` model/toolset content to solve a CLI-ergonomics request.
+- [ ] Must NOT suggest editing `agent.yaml` as the primary solution to a CLI-ergonomics request (aliases are the better fit).
 
 ### Verification commands
 ```bash
@@ -91,7 +91,7 @@ docker agent alias list --json
 - [ ] Uses `docker agent run ./agent.yaml` to select the explicitly named file and `docker agent run default` to select the alias.
 
 ### Must not
-- [ ] Must NOT rename `docker-agent.yaml` to `agent.yaml` as an auto-discovery fix.
+- [ ] Must NOT suggest renaming files as the primary solution; should explain how to explicitly select different configs.
 - [ ] Must NOT claim the default alias overrides a discovered project config.
 
 ### Verification commands
