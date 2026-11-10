@@ -656,7 +656,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--skill", help="Run only this skill's eval")
     parser.add_argument("--prompt", type=int, help="Run only this prompt number")
     parser.add_argument("--agent", choices=["claude", "codex"], default="claude", help="Agent to test")
-    parser.add_argument("--model", help="Model for agent (default varies by agent)")
+    parser.add_argument("--model", help="Model for agent (default: 'sonnet' for claude, 'gpt-6-luna' for codex)")
     parser.add_argument("--judge-model", default="claude-sonnet-4-5-20250929", help="Model for judge")
     parser.add_argument("--repeat", type=int, default=1, help="Runs per prompt")
     parser.add_argument("--pass-threshold", type=float, default=1.0,
@@ -667,6 +667,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--regrade", type=Path, help="Re-grade saved run")
     parser.add_argument("--list", action="store_true", help="List evals")
     args = parser.parse_args(argv)
+    
+    # Set default model based on agent if not specified
+    if args.model is None:
+        args.model = "sonnet" if args.agent == "claude" else "gpt-6-luna"
     
     # Set defaults based on agent
     if args.agent_bin is None:

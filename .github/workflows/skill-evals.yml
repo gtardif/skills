@@ -287,16 +287,12 @@ jobs:
       - name: Run eval for ${{ matrix.skill }} (Codex)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          INPUT_MODEL: ${{ inputs.model }}
+          INPUT_MODEL: ${{ inputs.model || 'gpt-6-luna' }}
           INPUT_REPEAT: ${{ inputs.repeat || '1' }}
         run: |
-          model_arg=""
-          if [ -n "$INPUT_MODEL" ]; then
-            model_arg="--model $INPUT_MODEL"
-          fi
           .venv/bin/python scripts/eval_judge.py \
             --agent codex \
-            $model_arg \
+            --model "$INPUT_MODEL" \
             --repeat "$INPUT_REPEAT" \
             --skill "${{ matrix.skill }}"
 
