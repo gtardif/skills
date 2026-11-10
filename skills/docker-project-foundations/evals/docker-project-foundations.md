@@ -44,7 +44,7 @@ directory, fails or checks the wrong folder.
 ### Must not
 
 - [ ] Must NOT suggest `brew install postgres`, `apt install postgresql`, or any host-level database install
-- [ ] Must NOT use `latest` as an image tag anywhere
+- [ ] Must NOT use `latest` as a base image tag (for the built app image, `latest` or omitting a tag is acceptable) anywhere
 - [ ] Must NOT use the legacy filename `docker-compose.yml`
 - [ ] Must NOT run the application as root in the final image
 - [ ] Must NOT publish unauthenticated Redis or other datastores to non-loopback host interfaces
@@ -77,7 +77,7 @@ docker compose down
 
 **Prompt to agent:**
 
-> Create Docker support for a Python Flask project. Create a Dockerfile, compose.yaml, and .dockerignore with best practices.
+> Create Docker support for a Python Flask project. Create a Dockerfile, compose.yaml, and .dockerignore with best practices. The compose.yaml should support development workflow with live code reload.
 >
 > (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 

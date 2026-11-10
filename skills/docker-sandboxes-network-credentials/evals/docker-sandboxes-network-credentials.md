@@ -87,7 +87,7 @@ sbx --app-name "$APP" secret ls --json
       as intended.
 - [ ] Recommends `sbx policy deny network telemetry.example.com` alongside
       the existing allow rule.
-- [ ] Mentions `sbx policy check network` to verify the effective decision
+- [ ] (Optional) Mentions `sbx policy check network` to verify the effective decision
       before relying on it.
 
 ### Must not

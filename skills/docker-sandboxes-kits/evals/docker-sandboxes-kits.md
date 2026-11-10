@@ -120,8 +120,8 @@ normal `sbx kit validate` can accept the source while `--offline` rejects it.
 ### Expected behaviors
 - [ ] Uses `network-policy@1` and puts the host in both `install` and
       `runtime`, explaining that an absent phase grants nothing.
-- [ ] Uses `credential@1`, marks it `optional: true` unless the kit cannot run
-      unauthenticated.
+- [ ] Uses `credential@1` and discusses when to mark it `optional: true` (for
+      APIs that work without auth) versus required (when auth is essential).
 - [ ] Keeps the token out of the descriptor, args, and recipe.
 
 ### Must not

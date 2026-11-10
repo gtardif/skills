@@ -16,10 +16,10 @@ Skill under test: `skills/docker-agent-run/`
 ### Expected behaviors
 - [ ] Recommends `--exec` (headless, no TUI) together with `--safety restricted`.
 - [ ] Explains that `restricted` denies unsafe calls instead of silently approving them, unlike `autonomous`/`--yolo`.
-- [ ] Does not recommend `--safety autonomous`/`--yolo` for this unattended scenario.
+- [ ] Positions `--safety restricted` as the primary/default recommendation for CI.
 
 ### Must not
-- [ ] Must NOT recommend `--yolo` or `--safety autonomous` as the default answer for an unattended/CI run.
+- [ ] Must NOT recommend `--yolo` or `--safety autonomous` as the primary or default answer for an unattended/CI run (mentioning it as a lower-safety alternative is acceptable if `restricted` is clearly the main recommendation).
 
 ### Verification commands
 ```bash
@@ -91,7 +91,7 @@ docker agent alias list --json
 - [ ] Uses `docker agent run ./agent.yaml` to select the explicitly named file and `docker agent run default` to select the alias.
 
 ### Must not
-- [ ] Must NOT suggest renaming files as the primary solution; should explain how to explicitly select different configs.
+- [ ] Must NOT suggest renaming/deleting files as the only or primary solution; should explain how to explicitly select different configs (mentioning renaming as a secondary option after explaining explicit selection is acceptable).
 - [ ] Must NOT claim the default alias overrides a discovered project config.
 
 ### Verification commands

@@ -40,7 +40,7 @@ docker agent serve mcp ./agent.yaml
 ### Expected behaviors
 - [ ] Recommends `docker agent share push ./agent.yaml docker.io/<user>/<name>:<tag>`.
 - [ ] Mentions the counterpart `docker agent share pull docker.io/<user>/<name>:<tag>`.
-- [ ] Notes that `instruction_file` contents are inlined automatically so the published agent stays self-contained.
+- [ ] (Optional) Notes that `instruction_file` contents are inlined automatically so the published agent stays self-contained.
 
 ### Must not
 - [ ] Must NOT tell the user to manually zip/bundle referenced instruction files before pushing.
