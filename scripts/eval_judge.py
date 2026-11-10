@@ -184,6 +184,7 @@ class JudgeResult:
     passed: bool
     reasoning: str
     is_must_not: bool = False
+    is_optional: bool = False  # For (Optional) prefixed criteria
 
 
 def call_judge(prompt: str, model: str) -> dict[str, Any]:
@@ -295,11 +296,15 @@ IMPORTANT: For must_not items, "passed": true means the agent correctly AVOIDED 
         idx = ev.get("criterion_number", 1) - 1
         criteria_list = must_not if is_must_not else expected
         if 0 <= idx < len(criteria_list):
+            criterion = criteria_list[idx]
+            # Detect optional criteria (starts with "(Optional)" case-insensitive)
+            is_optional = criterion.strip().lower().startswith("(optional)")
             results.append(JudgeResult(
-                criteria_list[idx],
+                criterion,
                 ev.get("passed", False),
                 ev.get("reasoning", ""),
                 is_must_not,
+                is_optional,
             ))
     return results
 
@@ -589,7 +594,7 @@ def run_and_grade(eval_prompt: EvalPrompt, args: argparse.Namespace, run_dir: Pa
     meta = json.loads((run_dir / "run.json").read_text())
     report = {
         **meta,
-        "passed": all(r.passed for r in results),
+        "passed": all(r.passed for r in results if not r.is_optional),
         "workspace_files": list(result.workspace_files.keys()) if result.workspace_files else [],
         "results": [dataclasses.asdict(r) for r in results],
     }
@@ -610,7 +615,7 @@ def regrade(run_dir: Path, args: argparse.Namespace) -> list[JudgeResult]:
     
     results = grade(eval_prompt, transcript, args)
     
-    report = {**meta, "passed": all(r.passed for r in results),
+    report = {**meta, "passed": all(r.passed for r in results if not r.is_optional),
               "results": [dataclasses.asdict(r) for r in results]}
     (run_dir / "report.json").write_text(json.dumps(report, indent=2))
     
@@ -620,13 +625,18 @@ def regrade(run_dir: Path, args: argparse.Namespace) -> list[JudgeResult]:
 # ─── CLI ─────────────────────────────────────────────────────────────────────
 
 def print_results(label: str, results: list[JudgeResult], run_dir: Path, duration_secs: float | None = None) -> None:
-    passed = all(r.passed for r in results)
+    passed = all(r.passed for r in results if not r.is_optional)
     time_str = f" ({duration_secs:.1f}s)" if duration_secs is not None else ""
     print(f"\n{'PASS' if passed else 'FAIL'}: {label}{time_str}")
     for r in results:
         mark = "✓" if r.passed else "✗"
         prefix = "must-not" if r.is_must_not else "expected"
+        if r.is_optional:
+            prefix = f"optional-{prefix}"
         short = r.criterion[:70] + ("..." if len(r.criterion) > 70 else "")
+        # For optional criteria that fail, use a softer indicator
+        if r.is_optional and not r.passed:
+            mark = "○"  # Circle indicates optional
         print(f"  {mark} [{prefix}] {short}")
         if not r.passed and r.reasoning:
             print(f"      → {r.reasoning}")
@@ -664,7 +674,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.regrade:
         results = regrade(args.regrade, args)
         print_results(str(args.regrade), results, args.regrade)
-        return 0 if all(r.passed for r in results) else 1
+        return 0 if all(r.passed for r in results if not r.is_optional) else 1
     
     prompts = discover_evals(args.skill, args.prompt)
     if not prompts:
