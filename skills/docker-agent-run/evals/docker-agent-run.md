@@ -91,7 +91,7 @@ docker agent alias list --json
 - [ ] Uses `docker agent run ./agent.yaml` to select the explicitly named file and `docker agent run default` to select the alias.
 
 ### Must not
-- [ ] Must NOT suggest renaming/deleting files as the only or primary solution; should explain how to explicitly select different configs (mentioning renaming as a secondary option after explaining explicit selection is acceptable).
+- [ ] Must NOT suggest renaming/deleting files without first explaining how to explicitly select different configs via `docker agent run ./path` or `docker agent run <alias>`.
 - [ ] Must NOT claim the default alias overrides a discovered project config.
 
 ### Verification commands

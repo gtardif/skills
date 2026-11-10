@@ -29,10 +29,7 @@ the default daemon or approve untrusted files just to execute an eval.
       path is omitted.
 
 ### Must not
-- [ ] Must NOT suggest a bare `sbx run NAME` to reattach as the primary
-      recommendation (it should recommend `sbx run --name NAME`; it may
-      mention the bare form is legacy/deprecated-but-accepted if relevant,
-      but must not present it as nonexistent or as the preferred form).
+- [ ] Must NOT recommend `sbx run NAME` (without `--name`) for reattaching to an existing sandbox; the recommended form is `sbx run --name NAME`.
 
 ### Verification commands
 ```bash

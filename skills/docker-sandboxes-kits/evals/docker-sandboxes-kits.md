@@ -35,8 +35,8 @@ live `sbx`.
       `# syntax=docker/sandbox-kit:3`, plus a `<kit>.dockerfile` content
       recipe.
 - [ ] Declares one build-phase `version` arg that drives the install.
-- [ ] Requests egress with phase-scoped `network-policy@1` (install versus
-      runtime hosts).
+- [ ] (Optional) Requests egress with phase-scoped `network-policy@1` (install versus
+      runtime hosts) showing build-time and runtime hosts separately.
 
 ### Must not
 - [ ] Must NOT author a `spec.yaml`, use `schemaVersion: "2"` or
@@ -93,8 +93,8 @@ overlay, export an OCI layout, and run `kit-tck validate --layout`.
 ### Expected behaviors
 - [ ] Says no: normal `sbx kit validate` is not a substitute for conformance
       and runtime checks.
-- [ ] Recommends the v3 workflow: a `docker buildx build` descriptor check,
-      an OCI layout export judged by `kit-tck`, and a real composition test.
+- [ ] Recommends additional validation steps beyond `sbx kit validate`, such as
+      building the kit, running `kit-tck` conformance checks, or composition testing.
 - [ ] Says a successful build is not proof the kit works.
 
 ### Must not
