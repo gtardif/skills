@@ -22,9 +22,8 @@ directory, fails or checks the wrong folder.
 
 - [ ] Agent creates a `.dockerignore` file
 - [ ] `.dockerignore` excludes `node_modules/`, `.git/`, `.env`, and IDE config directories
-- [ ] `.dockerignore` excludes root and nested `.npmrc` files with `**/.npmrc`
-- [ ] Both npm installation steps mount registry configuration as an optional BuildKit secret
-- [ ] Public-package builds work without an `.npmrc` file; private-registry builds use `--secret id=npmrc,src=<config-path>`
+- [ ] `.dockerignore` excludes `.npmrc` files (using `.npmrc`, `**/.npmrc`, or equivalent pattern)
+- [ ] Dockerfile uses BuildKit secrets for private registry access if mentioned (e.g., `--mount=type=secret`)
 - [ ] Agent creates a `Dockerfile` with a multi-stage build
 - [ ] Dockerfile pins the base image to a specific version (e.g., `node:22-slim`), not `latest`
 - [ ] Dockerfile copies `package.json` and `package-lock.json` before copying source code (layer caching)
@@ -49,7 +48,7 @@ directory, fails or checks the wrong folder.
 - [ ] Must NOT run the application as root in the final image
 - [ ] Must NOT publish unauthenticated Redis or other datastores to non-loopback host interfaces
 - [ ] Must NOT hardcode database passwords directly in `compose.yaml`
-- [ ] Must NOT copy `.npmrc` into any image stage, including through a broad source copy
+- [ ] Must NOT copy `.npmrc` into any image stage (either exclude in `.dockerignore` or avoid broad COPY)
 - [ ] Must NOT pass registry credentials through `ARG`, `ENV`, or build logs
 
 ### Verification commands
@@ -137,11 +136,11 @@ docker compose down
 - [ ] Agent creates a `.dockerignore` file
 - [ ] Agent creates a multi-stage `Dockerfile` (build stage compiles Go binary, runtime stage is minimal)
 - [ ] Runtime stage uses `scratch`, `distroless`, or Alpine
-- [ ] Dockerfile pins all base image tags to specific versions
+- [ ] Dockerfile uses versioned base image tags (not `latest`)
 - [ ] Go binary is statically compiled (e.g., `CGO_ENABLED=0`)
 - [ ] Dockerfile sets a non-root user in the runtime stage
 - [ ] Agent creates a `compose.yaml`
-- [ ] Compose file defines Redis as a service with a pinned image tag
+- [ ] Compose file defines Redis as a service with a versioned image tag (not `latest`)
 - [ ] Compose file includes a health check for Redis (using `redis-cli ping`)
 - [ ] Compose file uses `depends_on` with `condition: service_healthy`
 

@@ -23,14 +23,10 @@ the default daemon or approve untrusted files just to execute an eval.
 ### Expected behaviors
 - [ ] Recommends `sbx secret set github` (interactively, or piped via stdin),
       not passing the token as `--env` or a kit argument.
-- [ ] Explains that GitHub's proxy-managed flow uses a sentinel and
-      domain-scoped injection, not the raw token inside the sandbox.
-- [ ] Does not generalize this to OAuth passthrough or claim that a leaked
-      real credential is harmless outside the sandbox.
-- [ ] Mentions scoping secrets to a sandbox (via `--sandbox NAME`) or explains
-      the default applies to new sandboxes.
-- [ ] Notes that storing the token does not automatically grant network egress;
-      may mention checking or allowing the target domain in the policy.
+- [ ] Explains that the proxy-managed flow keeps the raw token outside the sandbox
+      (using a sentinel/masked value, domain-scoped injection, or similar mechanism).
+- [ ] Notes that storing the token does not automatically grant network egress
+      (may need to allow the target domain in policy).
 
 ### Must not
 - [ ] Must NOT recommend `sbx create --env GH_TOKEN=<value>` or
@@ -114,12 +110,10 @@ sbx --app-name "$APP" policy check network telemetry.example.com --verbose
 > (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
-- [ ] Warns that `sbx policy reset` deletes the ENTIRE local policy store
-      and stops the daemon and every currently running sandbox; the daemon
-      restarts on the next daemon-backed command.
+- [ ] Warns that `sbx policy reset` is destructive: deletes the entire policy store
+      and stops running sandboxes.
 - [ ] Recommends targeted removal instead: `sbx policy rm network --id ...`
-      or `--resource ...` for the one bad rule, retaining `--sandbox NAME`
-      if it belongs to a sandbox rather than the global policy.
+      or `--resource ...` to remove just the problematic rule.
 - [ ] Does not present `sbx policy reset` as a routine or low-cost fix.
 
 ### Must not
@@ -147,13 +141,9 @@ sbx --app-name "$APP" policy rm network --resource telemetry.example.com
 > (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
-- [ ] Explains that passthrough without a refresh sentinel forwards the real
-      OAuth token response; the built-in Devin kit uses that configuration.
-- [ ] Distinguishes unusable proxy sentinels from usable upstream credentials.
-- [ ] States that sandbox egress policy does not restrict off-sandbox use of
-      a leaked token, and recommends revoking or rotating it.
-- [ ] Notes that hiding a token does not prevent authorized API use from
-      inside the sandbox; scopes and service permissions still matter.
+- [ ] Explains that OAuth passthrough (as used by the Devin kit) forwards real tokens, not proxy sentinels, so the sandbox can see the actual credential.
+- [ ] Clarifies that sandbox network policy only restricts sandbox egress - a leaked token works outside the sandbox.
+- [ ] Recommends revoking or rotating exposed credentials, and/or limiting token scopes at the provider level.
 
 ### Must not
 - [ ] Must NOT promise that all sandbox agents are unable to read credentials.

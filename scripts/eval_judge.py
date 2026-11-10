@@ -186,30 +186,79 @@ class JudgeResult:
     is_must_not: bool = False
 
 
+def get_docker_gateway_token() -> str:
+    """Get Docker Gateway token from Docker Desktop credentials or environment."""
+    import subprocess
+    
+    # First try environment variable
+    token = os.environ.get("DOCKER_GATEWAY_TOKEN")
+    if token:
+        return token
+    
+    # Try to get from Docker Desktop credential store
+    try:
+        result = subprocess.run(
+            ["docker-credential-desktop", "get"],
+            input="https://index.docker.io/v1/access-token",
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        if result.returncode == 0:
+            import json as json_mod
+            cred = json_mod.loads(result.stdout)
+            return cred.get("Secret", "")
+    except (subprocess.TimeoutExpired, FileNotFoundError, json.JSONDecodeError):
+        pass
+    
+    raise RuntimeError("DOCKER_GATEWAY_TOKEN not set and could not retrieve from Docker Desktop")
+
+
 def call_judge(prompt: str, model: str) -> dict[str, Any]:
-    """Call LLM judge via Anthropic API."""
+    """Call LLM judge via Anthropic API or Docker Gateway (for Luna models)."""
     import urllib.request
     import urllib.error
     
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise RuntimeError("ANTHROPIC_API_KEY not set")
+    # Use Docker Gateway for Luna/GPT models, Anthropic for Claude models
+    use_docker_gateway = model.startswith("gpt-") or "luna" in model.lower()
     
-    body = json.dumps({
-        "model": model,
-        "max_tokens": 4096,
-        "messages": [{"role": "user", "content": prompt}],
-    }).encode()
-    
-    req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
-        data=body,
-        headers={
-            "Content-Type": "application/json",
-            "x-api-key": api_key,
-            "anthropic-version": "2023-06-01",
-        },
-    )
+    if use_docker_gateway:
+        api_key = get_docker_gateway_token()
+        
+        body = json.dumps({
+            "model": model,
+            "max_completion_tokens": 4096,
+            "messages": [{"role": "user", "content": prompt}],
+        }).encode()
+        
+        req = urllib.request.Request(
+            "https://gw.docker.com/v1/docker/gateways/default/inference/openai/v1/chat/completions",
+            data=body,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+            },
+        )
+    else:
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise RuntimeError("ANTHROPIC_API_KEY not set")
+        
+        body = json.dumps({
+            "model": model,
+            "max_tokens": 4096,
+            "messages": [{"role": "user", "content": prompt}],
+        }).encode()
+        
+        req = urllib.request.Request(
+            "https://api.anthropic.com/v1/messages",
+            data=body,
+            headers={
+                "Content-Type": "application/json",
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+            },
+        )
     
     try:
         with urllib.request.urlopen(req, timeout=120) as resp:
@@ -217,7 +266,11 @@ def call_judge(prompt: str, model: str) -> dict[str, Any]:
     except urllib.error.HTTPError as e:
         raise RuntimeError(f"API error {e.code}: {e.read().decode() if e.fp else ''}") from e
     
-    text = result.get("content", [{}])[0].get("text", "")
+    # Extract text from response (different format for OpenAI vs Anthropic)
+    if use_docker_gateway:
+        text = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+    else:
+        text = result.get("content", [{}])[0].get("text", "")
     # Extract JSON from response
     json_match = re.search(r'```json\s*\n?(.+?)\n?```', text, re.DOTALL)
     json_str = json_match.group(1) if json_match else text
@@ -261,7 +314,7 @@ def judge_transcript(
             files_parts.append(f"### {path}\n```\n{content}\n```")
         files_section = f"""\n\n## Files Created in Workspace\n\nThe following files were found in the workspace after the agent finished:\n\n{chr(10).join(files_parts)}"""
     
-    prompt = f"""You are evaluating an AI agent's response about Docker Sandboxes (sbx CLI).
+    prompt = f"""You are evaluating an AI agent's response about Docker skills and CLI tools.
 The transcript below shows everything the agent said and did (including any tool calls).
 
 ## Full Transcript
@@ -276,17 +329,28 @@ EXPECTED BEHAVIORS (must satisfy all):
 MUST NOT (must not violate any):
 {must_not_text}
 
+## Evaluation Rules
+
+1. **Semantic equivalence matters**: If the agent conveys the same meaning using different
+   words or phrasing, that satisfies the criterion. Don't require exact phrasing.
+
+2. **Check actual files**: When criteria mention file contents (e.g., ".dockerignore excludes X"),
+   look at the actual file in the "Files Created" section, not just what the agent said.
+   The file content is the ground truth.
+
+3. **Conditional criteria**: For criteria like "Must NOT do X without also doing Y":
+   - If the agent does Y (the required context), then doing X is ALLOWED
+   - Only fail if X is done WITHOUT Y being present
+
+4. **Order doesn't matter**: If a criterion says "explain A before mentioning B", as long as
+   both A and B are present in the response, consider the criterion satisfied.
+
 ## Task
 
 For each criterion, output a JSON evaluation.
 
-For EXPECTED behaviors: set "passed": true if the agent satisfied the criterion.
-For MUST NOT items: set "passed": true if the agent AVOIDED the violation (did NOT do the forbidden thing).
-
-Consider the FULL transcript AND any files shown above - the agent may have created files
-without showing them in the transcript. If a criterion asks about file contents (e.g.,
-"Dockerfile uses multi-stage build"), check the actual file content in the "Files Created"
-section, not just what the transcript shows.
+For EXPECTED behaviors: set "passed": true if the agent satisfied the criterion (semantically).
+For MUST NOT items: set "passed": true if the agent AVOIDED the violation.
 
 Return JSON:
 {{
@@ -296,9 +360,11 @@ Return JSON:
   ]
 }}
 
-Be strict but fair. Order: all expected behaviors first, then all must_not items.
+Evaluate fairly - if the agent's response achieves the goal of the criterion even if
+worded differently, mark it as passed. Order: all expected behaviors first, then all must_not items.
 
-IMPORTANT: For must_not items, "passed": true means the agent correctly AVOIDED the bad behavior."""
+IMPORTANT: For must_not items, "passed": true means the agent correctly AVOIDED the bad behavior.
+Double-check your reasoning matches your passed value before responding."""
 
     try:
         result = call_judge(prompt, model)

@@ -38,9 +38,9 @@ docker agent run --exec --safety restricted ./agent.yaml "<task>"
 > (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
-- [ ] Identifies the sandbox's default-deny network proxy as the cause.
-- [ ] Recommends `docker agent sandbox allow api.example.com` as the persistent fix.
-- [ ] Mentions `docker agent sandbox list`/`deny` for managing the allowlist.
+- [ ] Identifies the sandbox's network proxy/policy blocking the request as the cause.
+- [ ] Recommends adding the domain to the allowlist using `docker agent sandbox allow` or `sbx policy allow network`.
+- [ ] Provides a way to inspect/manage the policy (e.g., list rules, check policy, or view logs).
 
 ### Must not
 - [ ] Must NOT recommend disabling the sandbox entirely as the fix (that changes the security posture, not just the network policy).
@@ -87,12 +87,12 @@ docker agent alias list --json
 > (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
-- [ ] Explains that a local run without an agent argument discovers `docker-agent.yaml`, then `.yml`, then `.hcl`, before falling back to the `default` alias or built-in default.
-- [ ] Uses `docker agent run ./agent.yaml` to select the explicitly named file and `docker agent run default` to select the alias.
+- [ ] Explains the auto-discovery order: checks for `docker-agent.yaml`, `.yml`, `.hcl` (first match wins).
+- [ ] Shows how to explicitly select a non-auto-discovered file like `agent.yaml` with path syntax (e.g., `docker agent run ./agent.yaml`).
+- [ ] Shows how to invoke the default alias with `docker agent run default`.
 
 ### Must not
-- [ ] Must NOT suggest renaming/deleting files as the solution without also explaining how to explicitly select different configs via `docker agent run ./path` or `docker agent run <alias>`.
-- [ ] Must NOT claim the default alias overrides a discovered project config.
+- [ ] Must NOT claim that the default alias is automatically used when a project config file exists (project files take precedence over aliases in auto-discovery).
 
 ### Verification commands
 ```bash
