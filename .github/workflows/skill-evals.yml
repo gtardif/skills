@@ -212,7 +212,7 @@ jobs:
   eval-codex:
     needs: detect-changes
     if: |
-      (inputs.agent == 'codex' || inputs.agent == 'both') &&
+      (inputs.agent == 'codex' || inputs.agent == 'both' || inputs.agent == '') &&
       needs.detect-changes.outputs.skills != '[]'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
