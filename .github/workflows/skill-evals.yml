@@ -286,6 +286,7 @@ jobs:
 
       - name: Run eval for ${{ matrix.skill }} (Codex)
         env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           INPUT_MODEL: ${{ inputs.model }}
           INPUT_REPEAT: ${{ inputs.repeat || '1' }}
         run: |
