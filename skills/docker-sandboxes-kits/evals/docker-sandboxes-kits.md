@@ -22,8 +22,9 @@ live `sbx`.
 **Prompt to agent:**
 
 > I want to package the `gh` CLI as a reusable Docker Sandboxes kit I can
-> attach to any agent. How should I structure it, and how do I pin the
-> version?
+> attach to any agent. How should I structure it, how do I pin the
+> version, and how do I declare network access for both build-time downloads
+> and runtime API calls?
 
 >
 > (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
