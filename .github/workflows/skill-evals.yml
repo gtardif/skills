@@ -24,7 +24,7 @@ on:
       agent:
         description: "Agent to test (claude, codex, or both)"
         required: false
-        default: "claude"
+        default: "both"
         type: choice
         options:
           - claude
