@@ -11,7 +11,7 @@ Skill under test: `skills/docker-agent-config/`
 > I want to build an AI agent with Docker that can read/write files and run shell commands, using Claude. Write me the agent.yaml.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Produces a valid `agent.yaml` with a top-level `agents:` key and at least a `root` agent.
@@ -38,7 +38,7 @@ docker agent debug toolsets ./agent.yaml
 > Add a reviewer sub-agent to my coding agent that can only read files, not write them, and have the main agent delegate review tasks to it.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Adds a `reviewer` agent with `readonly: true` and a `filesystem` toolset,
@@ -64,7 +64,7 @@ docker agent debug toolsets ./agent.yaml
 > I'm configuring my Docker Agent and this agent must never send data to a third party. What model provider should I use in my agent.yaml?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `dmr` (Docker Model Runner) as the local, no-credential provider.
@@ -89,7 +89,7 @@ docker agent doctor ./agent.yaml
 > My agent uses a custom model gateway and an authenticated MCP service. Can I put their API keys and sensitive customer records in instruction or command prompts using ${env.VAR} so they stay out of Git? Is redact_secrets enough to make that safe?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Explains that environment interpolation expands values into prompt text sent to the model; keeping values out of Git does not keep them out of prompts.

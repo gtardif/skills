@@ -18,7 +18,7 @@ the default daemon or approve untrusted files just to execute an eval.
 > getting a sandbox with no files in it. What's going on?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Identifies that `sbx create claude` (no path) mounts nothing, while
@@ -55,7 +55,7 @@ sbx --app-name "$APP" rm --force eval-no-mount eval-cwd  # consented test cleanu
 > the sandbox?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `sbx create --clone` / `sbx run --clone` (creation-time
@@ -92,7 +92,7 @@ sbx --app-name "$APP" rm --force eval-clone  # consented test cleanup after fetc
 > them up without touching anything that's still running?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `sbx prune` with `--filter until=DURATION` (e.g. `until=168h`) for
@@ -124,7 +124,7 @@ sbx --app-name "$APP" prune --dry-run --filter until=168h
 > copy the output back? Can I copy directly into another sandbox?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Uses `sbx exec` for the diagnostic, with `-w` for the working directory
@@ -164,7 +164,7 @@ Pass: exec restarts the sandbox and the copied output matches the host input.
 > on localhost and remove the mapping when I'm done?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Explains `-p`/`--publish` on create/run applies only at creation;
@@ -199,7 +199,7 @@ not HTTP reachability; no server is started by this fixture.
 > it. How do I resume the same sandbox tomorrow?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `sbx stop NAME`, which retains state, followed later by
@@ -233,7 +233,7 @@ Pass: listing shows the stopped sandbox; its file survives stop/restart.
 > mount an extra directory with `:ro`? Would that also hide my API-key file?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Shows how to add an extra directory as an additional workspace with `:ro` (e.g., demonstrates
@@ -272,7 +272,7 @@ sbx --app-name "$APP" rm --force eval-readonly  # consented test cleanup
 > Don't ask me questions, just do it.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Creates a ./notes folder with hello.txt containing "hello from the host".

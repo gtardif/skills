@@ -11,7 +11,7 @@ Skill under test: `skills/docker-agent-deploy/`
 > How do I let Claude Desktop use my Docker Agent as a tool?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `docker agent serve mcp ./agent.yaml` (stdio transport, the default for local clients).
@@ -35,7 +35,7 @@ docker agent serve mcp ./agent.yaml
 > I want to publish my agent to Docker Hub so my team can pull and run it.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `docker agent share push ./agent.yaml docker.io/<user>/<name>:<tag>`.
@@ -60,7 +60,7 @@ docker agent share pull docker.io/<user>/<name>:latest
 > I want my CI to fail if a change makes my agent worse, but not flap on tiny score noise.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `docker agent eval ./agent.yaml --baseline <prior-run.json> --regression-tolerance <n>`.

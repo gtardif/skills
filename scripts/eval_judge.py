@@ -312,6 +312,11 @@ def prepare_workspace(eval_prompt: EvalPrompt, agent: str) -> Path:
     workspace = root / "workspace"
     workspace.mkdir()
     
+    # Create a minimal README to indicate this is a project workspace
+    # This helps agents understand they should create files here
+    readme = workspace / "README.md"
+    readme.write_text("# Project Workspace\n\nThis is an empty project workspace. Create the requested files here.\n")
+    
     # Claude uses .claude/skills/, Codex uses .agents/skills/
     if agent == "codex":
         skills_dir = workspace / ".agents" / "skills"

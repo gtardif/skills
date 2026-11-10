@@ -15,7 +15,7 @@ the fallback. Record which mode each run used.
 > How do I let my sandbox reach api.example.com but block everything else?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
@@ -70,7 +70,7 @@ task eval
 > How do I give my sandbox a GitHub token?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
@@ -98,7 +98,7 @@ task eval
 > Is cloud sandbox compute included in my Docker Business subscription?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
@@ -124,7 +124,7 @@ task eval
 > Add the Docker docs MCP server to my Docker Agent.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 

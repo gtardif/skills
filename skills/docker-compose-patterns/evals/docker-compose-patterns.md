@@ -19,7 +19,7 @@ sharing.
 > Create a compose.yaml for a web app with Postgres, Redis, and a background worker.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
@@ -91,7 +91,7 @@ docker compose down -v
 > ```
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
@@ -164,7 +164,7 @@ docker compose down -v
 > ```
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
@@ -217,7 +217,7 @@ docker compose down -v
 > commands to run.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 

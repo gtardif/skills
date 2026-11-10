@@ -11,7 +11,7 @@ Skill under test: `skills/docker-agent-run/`
 > I want to run my agent from a GitHub Actions job with no human to approve tool calls. What flags should I use?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `--exec` (headless, no TUI) together with `--safety restricted`.
@@ -35,7 +35,7 @@ docker agent run --exec --safety restricted ./agent.yaml "<task>"
 > My Docker Agent fails with "403 Blocked by network policy" for api.example.com when I run it with `docker agent run --sandbox`. How do I fix this?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Identifies the sandbox's default-deny network proxy as the cause.
@@ -60,7 +60,7 @@ docker agent sandbox list
 > I keep typing `docker agent run myorg/coder --yolo --model anthropic/claude-sonnet-4-5`. Can I make this shorter?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `docker agent alias add <name> myorg/coder --yolo --model anthropic/claude-sonnet-4-5`.
@@ -84,7 +84,7 @@ docker agent alias list --json
 > I have both agent.yaml and docker-agent.yaml in this folder, and a default alias. Which one does a bare docker agent run use, and how do I select the others?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Explains that a local run without an agent argument discovers `docker-agent.yaml`, then `.yml`, then `.hcl`, before falling back to the `default` alias or built-in default.

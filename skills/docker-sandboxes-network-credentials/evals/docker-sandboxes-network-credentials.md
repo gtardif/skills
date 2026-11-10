@@ -18,7 +18,7 @@ the default daemon or approve untrusted files just to execute an eval.
 > token without it being able to see or leak the raw value?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `sbx secret set github` (interactively, or piped via stdin),
@@ -53,7 +53,7 @@ sbx --app-name "$APP" secret ls --json
 > just the host. How do I set that up?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `sbx secret set --registry ghcr.io` with `--all-sandboxes` for
@@ -80,7 +80,7 @@ sbx --app-name "$APP" secret ls --json
 > specifically. Will that work?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Confirms deny always wins over allow for the same host, so this works
@@ -111,7 +111,7 @@ sbx --app-name "$APP" policy check network telemetry.example.com --verbose
 > `sbx policy reset` to clean it up?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Warns that `sbx policy reset` deletes the ENTIRE local policy store
@@ -144,7 +144,7 @@ sbx --app-name "$APP" policy rm network --resource telemetry.example.com
 > does my network allowlist make a leaked token harmless?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Explains that passthrough without a refresh sentinel forwards the real

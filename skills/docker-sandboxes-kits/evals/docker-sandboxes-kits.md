@@ -26,7 +26,7 @@ live `sbx`.
 > version?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends a v3 `kind: mixin` (it adds a tool to somebody else's
@@ -61,7 +61,7 @@ live check, follow `checks/verification.md` (builder, `kit-tck`,
 > wrong. Why, and what should I do instead?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Explains that a mixin cannot set `ENTRYPOINT`, `CMD`, `USER` or
@@ -88,7 +88,7 @@ overlay, export an OCI layout, and run `kit-tck validate --layout`.
 > `sbx kit validate ./my-kit` enough to know the kit is valid?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Says no: normal `sbx kit validate` is not a substitute for conformance
@@ -115,7 +115,7 @@ normal `sbx kit validate` can accept the source while `--offline` rejects it.
 > will go wrong if I get them slightly off?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Uses `network-policy@1` and puts the host in both `install` and
@@ -142,7 +142,7 @@ core guidance.
 > so consumers can verify where it came from?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Says publishing is the build with `--push` (there is no pack step and no
@@ -169,7 +169,7 @@ real push in an eval.
 > validation error, and which skill converts it to v3 for me?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Says legacy v2 `spec.yaml` kits are out of scope for this skill.
@@ -195,7 +195,7 @@ Static text check against the skill's "Migrating from v2" guidance and
 > runs once it is composed onto a workload. What should I run?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Composes the built overlay onto a real workload with

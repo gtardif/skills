@@ -19,7 +19,7 @@ the default daemon or approve untrusted files just to execute an eval.
 > script that clones a fixtures repo before it starts.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends an `sbxenv.yaml` file with `schemaVersion: "1"`, `agent:
@@ -52,7 +52,7 @@ sbx --app-name "$APP" env plan sbxenv.yaml
 > end up able to change the file anyway. Is that expected?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Explains this is expected and is exactly the gap `sbx env plan`
@@ -87,7 +87,7 @@ sbx --app-name "$APP" env plan sbxenv.yaml   # read the writable/protected-files
 > just started failing. Will `sbx env rm` now refuse to remove the sandbox?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] States a `preRemove` failure is only a warning; the failure itself
@@ -113,7 +113,7 @@ sbx --app-name "$APP" env rm sbxenv.yaml  # review the destroy plan; confirm onl
 > — without setting up any agent credentials yet. What's the simplest file?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Recommends `agent: shell` with a `workspace:` and no `secrets:`/
@@ -141,7 +141,7 @@ sbx --app-name "$APP" env plan assets/sbxenv.yaml
 > it once before hashing it for state? Is it then safe to commit that file?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] States that both the displayed plan and saved state use a `sha256:`
@@ -168,7 +168,7 @@ in the source cited by the skill. No real secret is needed for this eval.
 > it run again when I reattach or use `sbx env exec`?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Uses `lifecycle.postCreate` for work requiring an existing sandbox;
@@ -205,7 +205,7 @@ The runbook covers cleanup; do not substitute an unreviewed script.
 > `-y` for every PR's sbxenv.yaml, including contributions from forks?
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 - [ ] Explains `--auto-approve`/`-y` skips approval for non-interactive use;

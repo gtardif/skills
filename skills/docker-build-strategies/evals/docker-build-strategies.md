@@ -16,7 +16,7 @@ directory, fails or checks the wrong folder.
 > Write a Dockerfile for this Go API service.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
@@ -77,7 +77,7 @@ head -1 Dockerfile | grep -q 'syntax=docker/dockerfile' && echo "PASS" || echo "
 > ```
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
@@ -136,7 +136,7 @@ docker stop test-app
 > Create a Dockerfile for a Node.js app with a React frontend that needs a build step. The backend is in `server/` and the frontend is in `client/`. The frontend build outputs to `client/build/` and is served by the backend.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
@@ -197,7 +197,7 @@ docker stop test-fullstack
 > build it with `--ssh`.
 
 >
-> (This is an automated evaluation. Do not ask clarifying questions—proceed with best-practice defaults. If the workspace is empty, create all necessary files.)
+> (AUTOMATED EVAL: You MUST NOT ask questions or request clarification. Proceed immediately with best-practice defaults. Create all necessary files even if the workspace appears empty.)
 
 ### Expected behaviors
 
