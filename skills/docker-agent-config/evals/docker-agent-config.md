@@ -109,7 +109,7 @@ docker agent doctor ./agent.yaml
 Review the generated guidance and config without invoking a model or authenticating
 against a live service. Use throwaway values only if checking interpolation; never
 send real credentials to a provider or include them in diagnostic output. Follow
-[the preflight checks](../skills/docker-agent-config/checks/verification.md)
+[the preflight checks](../checks/verification.md)
 before running the config. Static checks in `eval-checks.yaml` guard the checked-in
 skill wording; they do not evaluate live model behavior or redaction completeness.
 
