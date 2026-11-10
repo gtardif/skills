@@ -102,7 +102,7 @@ docker compose down -v
 - [ ] Agent pins the `postgres` image to a specific version (e.g., `postgres:16`)
 - [ ] Agent pins the `redis` image to a specific version (e.g., `redis:7`)
 - [ ] Agent moves the hardcoded `POSTGRES_PASSWORD` to an `env_file` or at minimum flags it as a security concern
-- [ ] (Optional) Agent adds a named volume for Postgres data
+- [ ] Agent adds a named volume for Postgres data
 
 ### Must not
 
@@ -172,9 +172,9 @@ docker compose down -v
 - [ ] Override sets the `api` service to build from source instead of using a prebuilt image (using `build:` directive)
 - [ ] Override adds a bind mount or `develop.watch` for live-reloading application source code
 - [ ] Override sets `NODE_ENV` to `development`
-- [ ] (Optional) Override exposes a debug port (e.g., 9229 for Node.js)
+- [ ] Override exposes a debug port (e.g., 9229 for Node.js)
 - [ ] Agent explains that Compose automatically merges `compose.yaml` and `compose.override.yaml`
-- [ ] (Optional) If using Compose Watch, agent configures appropriate `action` types (`sync` for source, `rebuild` for dependency manifests)
+- [ ] If using Compose Watch, agent configures appropriate `action` types (`sync` for source, `rebuild` for dependency manifests)
 
 ### Must not
 

@@ -35,8 +35,8 @@ live `sbx`.
       `# syntax=docker/sandbox-kit:3`, plus a `<kit>.dockerfile` content
       recipe.
 - [ ] Declares one build-phase `version` arg that drives the install.
-- [ ] (Optional) Requests egress with phase-scoped `network-policy@1` (install versus
-      runtime hosts) showing build-time and runtime hosts separately.
+- [ ] Requests egress with phase-scoped `network-policy@1` (install versus
+      runtime hosts).
 
 ### Must not
 - [ ] Must NOT author a `spec.yaml`, use `schemaVersion: "2"` or
