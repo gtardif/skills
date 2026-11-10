@@ -137,7 +137,7 @@ docker compose down -v
 
 **Prompt to agent:**
 
-> Set up a development override for this production compose.yaml that builds from source using a Dockerfile:
+> Set up a development override for this production compose.yaml that builds from source using a Dockerfile and supports live code reload:
 >
 > ```yaml
 > services:
