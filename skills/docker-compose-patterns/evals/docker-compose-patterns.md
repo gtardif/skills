@@ -71,7 +71,7 @@ docker compose down -v
 
 **Prompt to agent:**
 
-> Add health checks and proper dependency ordering to this compose.yaml:
+> Add health checks and proper dependency ordering to this compose.yaml, and check for best practices:
 >
 > ```yaml
 > services:
@@ -137,7 +137,7 @@ docker compose down -v
 
 **Prompt to agent:**
 
-> Set up a development override for this production compose.yaml:
+> Set up a development override for this production compose.yaml that builds from source using a Dockerfile:
 >
 > ```yaml
 > services:
@@ -172,9 +172,7 @@ docker compose down -v
 - [ ] Override sets the `api` service to build from source instead of using a prebuilt image (using `build:` directive)
 - [ ] Override adds a bind mount or `develop.watch` for live-reloading application source code
 - [ ] Override sets `NODE_ENV` to `development`
-- [ ] Override exposes a debug port (e.g., 9229 for Node.js)
 - [ ] Agent explains that Compose automatically merges `compose.yaml` and `compose.override.yaml`
-- [ ] If using Compose Watch, agent configures appropriate `action` types (`sync` for source, `rebuild` for dependency manifests)
 
 ### Must not
 
