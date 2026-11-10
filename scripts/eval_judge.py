@@ -641,6 +641,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--model", help="Model for agent (default varies by agent)")
     parser.add_argument("--judge-model", default="claude-sonnet-4-5-20250929", help="Model for judge")
     parser.add_argument("--repeat", type=int, default=1, help="Runs per prompt")
+    parser.add_argument("--pass-threshold", type=float, default=1.0,
+                        help="Minimum pass rate (0.0-1.0) to exit successfully (default: 1.0 = all must pass)")
     parser.add_argument("--agent-bin", help="Agent CLI binary (default: 'claude' or 'codex')")
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--keep", action="store_true", help="Keep workspaces")
@@ -702,9 +704,12 @@ def main(argv: list[str] | None = None) -> int:
     # Summary
     passed = sum(1 for _, r, _ in all_results if all(x.passed for x in r))
     total_time = sum(d for _, _, d in all_results)
+    pass_rate = passed / len(all_results) if all_results else 0
     
     print(f"\n{'='*60}")
-    print(f"Total: {passed}/{len(all_results)} passed in {total_time:.1f}s")
+    print(f"Total: {passed}/{len(all_results)} passed ({pass_rate*100:.0f}%) in {total_time:.1f}s")
+    if args.pass_threshold < 1.0:
+        print(f"Pass threshold: {args.pass_threshold*100:.0f}%")
     
     # Per-skill summary table
     if len(skill_times) > 1 or args.skill is None:
@@ -718,7 +723,7 @@ def main(argv: list[str] | None = None) -> int:
             rate = f"{skill_passed}/{skill_total}"
             print(f"{skill:<45} {rate:<10} {skill_time:.1f}s")
     
-    return 0 if passed == len(all_results) else 1
+    return 0 if pass_rate >= args.pass_threshold else 1
 
 
 if __name__ == "__main__":
