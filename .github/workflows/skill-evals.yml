@@ -191,7 +191,7 @@ jobs:
             --agent claude \
             --model "$INPUT_MODEL" \
             --repeat "$INPUT_REPEAT" \
-            --skill "${{ matrix.skill }}" || echo "::warning::Eval failed for ${{ matrix.skill }} (Claude) - see artifacts for details"
+            --skill "${{ matrix.skill }}"
 
       - name: Upload eval artifacts
         if: always()
@@ -298,7 +298,7 @@ jobs:
             --agent codex \
             $model_arg \
             --repeat "$INPUT_REPEAT" \
-            --skill "${{ matrix.skill }}" || echo "::warning::Eval failed for ${{ matrix.skill }} (Codex) - see artifacts for details"
+            --skill "${{ matrix.skill }}"
 
       - name: Upload eval artifacts
         if: always()
